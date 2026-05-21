@@ -9,22 +9,23 @@ async function getCurrentUserId() {
 }
 
 export function useActivities() {
-  const query = useQuery({
+  return useQuery({
     queryKey: ['activities'],
     queryFn: async () => {
-      const userId = await getCurrentUserId();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('No authenticated user');
+
       const { data, error } = await supabase
         .from('activities')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .order('deadline', { ascending: true });
 
       if (error) throw error;
       return data as Activity[];
     },
+    select: (data) => data,
   });
-
-  return { activities: query.data ?? [], isLoading: query.isLoading, refetch: query.refetch };
 }
 
 export function useCreateActivity() {

@@ -16,11 +16,17 @@ import { theme } from '@/src/core/styles/theme';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [localError, setLocalError] = useState<string | null>(null);
   const { login, isLoading, error } = useLogin();
   const { googleLogin, isLoading: googleLoading, error: googleError } = useGoogleLogin();
 
   const handleLogin = async () => {
-    const ok = await login(email, password);
+    setLocalError(null);
+    if (!email.trim() || !password.trim()) {
+      setLocalError('Completa todos los campos');
+      return;
+    }
+    const ok = await login(email.trim(), password);
     if (ok) router.replace('/home');
   };
 
@@ -43,8 +49,8 @@ export default function LoginPage() {
             <Text style={styles.subtitle}>Inicia sesión en tu cuenta</Text>
           </View>
 
-          {error || googleError ? (
-            <Text style={styles.apiError}>{error ?? googleError}</Text>
+          {(error || googleError || localError) ? (
+            <Text style={styles.apiError}>{localError ?? error ?? googleError}</Text>
           ) : null}
 
           <Input label="Correo electrónico" value={email} onChangeText={setEmail} placeholder="tu@correo.com" keyboardType="email-address" autoCapitalize="none" />

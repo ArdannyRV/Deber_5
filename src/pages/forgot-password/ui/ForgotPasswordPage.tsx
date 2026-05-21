@@ -13,10 +13,20 @@ import { theme } from '@/src/core/styles/theme';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
+  const [localError, setLocalError] = useState<string | null>(null);
   const { sendReset, isLoading, error, isSuccess } = useForgotPassword();
 
   const handleSend = async () => {
-    await sendReset(email);
+    setLocalError(null);
+    if (!email.trim()) {
+      setLocalError('Por favor ingresa tu correo electrónico');
+      return;
+    }
+    if (!email.includes('@')) {
+      setLocalError('Ingresa un correo electrónico válido');
+      return;
+    }
+    await sendReset(email.trim());
   };
 
   if (isSuccess) {
@@ -52,8 +62,8 @@ export default function ForgotPasswordPage() {
             <Text style={styles.subtitle}>Restablece tu contraseña</Text>
           </View>
 
-          {error ? (
-            <Text style={styles.apiError}>{error}</Text>
+          {(error || localError) ? (
+            <Text style={styles.apiError}>{localError ?? error}</Text>
           ) : null}
 
           <Input label="Correo electrónico" value={email} onChangeText={setEmail} placeholder="tu@correo.com" keyboardType="email-address" autoCapitalize="none" />

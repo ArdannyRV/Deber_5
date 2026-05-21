@@ -1,81 +1,64 @@
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { Button as TamaguiButton, Spinner, Text } from 'tamagui';
 import { theme } from '@/src/core/styles/theme';
 
 interface ButtonProps {
-  label: string;
-  onPress: () => void;
+  label:      string;
+  onPress:    () => void;
   isLoading?: boolean;
-  variant?: 'primary' | 'ghost' | 'danger';
-  disabled?: boolean;
+  variant?:   'primary' | 'ghost' | 'danger';
+  disabled?:  boolean;
 }
 
-export default function Button({ label, onPress, isLoading, variant = 'primary', disabled }: ButtonProps) {
+const bgMap = {
+  primary: theme.colors.primary,
+  ghost:   'transparent',
+  danger:  theme.colors.danger,
+} as const;
+
+const borderMap = {
+  primary: theme.colors.primary,
+  ghost:   theme.colors.primary,
+  danger:  theme.colors.danger,
+} as const;
+
+const textColorMap = {
+  primary: '#FFFFFF',
+  ghost:   theme.colors.primary,
+  danger:  '#FFFFFF',
+} as const;
+
+export default function Button({
+  label,
+  onPress,
+  isLoading,
+  variant = 'primary',
+  disabled,
+}: ButtonProps) {
+  const isDisabled = disabled || isLoading;
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.base,
-        variant === 'primary' && styles.primary,
-        variant === 'ghost' && styles.ghost,
-        variant === 'danger' && styles.danger,
-        (disabled || isLoading) && styles.disabled,
-      ]}
+    <TamaguiButton
       onPress={onPress}
-      disabled={disabled || isLoading}
-      activeOpacity={0.8}
+      disabled={isDisabled}
+      height={52}
+      borderRadius={theme.radius.md}
+      width="100%"
+      backgroundColor={bgMap[variant]}
+      borderWidth={variant === 'ghost' ? 1.5 : 0}
+      borderColor={borderMap[variant]}
+      opacity={isDisabled ? 0.5 : 1}
+      pressStyle={{ opacity: 0.75 }}
+      icon={isLoading ? <Spinner color={textColorMap[variant]} size="small" /> : undefined}
     >
-      {isLoading ? (
-        <ActivityIndicator color={variant === 'primary' || variant === 'danger' ? theme.colors.white : theme.colors.primary} />
-      ) : (
+      {!isLoading && (
         <Text
-          style={[
-            styles.label,
-            variant === 'primary' && styles.labelPrimary,
-            variant === 'ghost' && styles.labelGhost,
-            variant === 'danger' && styles.labelDanger,
-          ]}
+          color={textColorMap[variant]}
+          fontSize={16}
+          fontWeight="700"
         >
           {label}
         </Text>
       )}
-    </TouchableOpacity>
+    </TamaguiButton>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    height: 52,
-    borderRadius: theme.radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    width: '100%',
-  },
-  primary: {
-    backgroundColor: theme.colors.primary,
-    ...theme.shadow.card,
-  },
-  ghost: {
-    backgroundColor: theme.colors.white,
-    borderWidth: 1.5,
-    borderColor: theme.colors.primary,
-  },
-  danger: {
-    backgroundColor: theme.colors.danger,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  labelPrimary: {
-    color: theme.colors.white,
-  },
-  labelGhost: {
-    color: theme.colors.primary,
-  },
-  labelDanger: {
-    color: theme.colors.white,
-  },
-});

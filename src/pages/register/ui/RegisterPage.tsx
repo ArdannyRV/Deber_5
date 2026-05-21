@@ -15,10 +15,24 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [localError, setLocalError] = useState<string | null>(null);
   const { register, isLoading, error, isSuccess } = useRegister();
 
   const handleRegister = async () => {
-    await register(email, password, name);
+    setLocalError(null);
+    if (!name.trim()) {
+      setLocalError('El nombre es obligatorio');
+      return;
+    }
+    if (!email.trim() || !email.includes('@')) {
+      setLocalError('Ingresa un correo electrónico válido');
+      return;
+    }
+    if (password.length < 6) {
+      setLocalError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    await register(email.trim(), password, name.trim());
   };
 
   if (isSuccess) {
@@ -54,8 +68,8 @@ export default function RegisterPage() {
             <Text style={styles.subtitle}>Crea tu cuenta</Text>
           </View>
 
-          {error ? (
-            <Text style={styles.apiError}>{error}</Text>
+          {(error || localError) ? (
+            <Text style={styles.apiError}>{localError ?? error}</Text>
           ) : null}
 
           <Input label="Nombre" value={name} onChangeText={setName} placeholder="Tu nombre completo" autoCapitalize="words" />

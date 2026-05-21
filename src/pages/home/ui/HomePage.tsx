@@ -46,7 +46,7 @@ export default function HomePage() {
   const userEmail = session?.user?.email ?? '';
   const initial = userEmail.charAt(0).toUpperCase();
 
-  const { activities, isLoading, refetch } = useActivities();
+  const { data: activities, isLoading, refetch } = useActivities();
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity();
   const deleteActivity = useDeleteActivity();
