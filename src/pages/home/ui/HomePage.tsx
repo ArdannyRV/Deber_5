@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import {
-  View, Text, FlatList, TouchableOpacity, Modal, Alert,
-  StyleSheet, Platform, StatusBar, TouchableWithoutFeedback,
+  View, Text, FlatList, ScrollView, TouchableOpacity, Modal, Alert,
+  StyleSheet, Platform, StatusBar, TouchableWithoutFeedback, TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -50,6 +50,17 @@ export default function HomePage() {
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity();
   const deleteActivity = useDeleteActivity();
+
+  const [selectedType, setSelectedType] = useState<ActivityType | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredActivities = (activities ?? []).filter(activity => {
+    const matchesType = selectedType ? activity.type === selectedType : true;
+    const matchesSearch = searchQuery.trim()
+      ? activity.subject.toLowerCase().includes(searchQuery.trim().toLowerCase())
+      : true;
+    return matchesType && matchesSearch;
+  });
 
   // Modal state
   const [modalVisible, setModalVisible] = useState(false);
@@ -153,6 +164,14 @@ export default function HomePage() {
 
   const renderEmpty = () => {
     if (isLoading) return null;
+    const emptyTitle = searchQuery || selectedType
+      ? 'Sin resultados'
+      : 'Sin actividades';
+    const emptySubtitle = searchQuery
+      ? `No se encontraron actividades para "${searchQuery}"`
+      : selectedType
+        ? `No tienes actividades de tipo "${selectedType}"`
+        : 'Toca + para agregar tu primera actividad';
     return (
       <View style={styles.empty}>
         <LottieView
@@ -161,8 +180,8 @@ export default function HomePage() {
           loop
           style={{ width: 280, height: 280 }}
         />
-        <Text style={styles.emptyTitle}>Sin actividades</Text>
-        <Text style={styles.emptySubtitle}>Toca + para agregar tu primera actividad</Text>
+        <Text style={styles.emptyTitle}>{emptyTitle}</Text>
+        <Text style={styles.emptySubtitle}>{emptySubtitle}</Text>
       </View>
     );
   };
@@ -193,23 +212,69 @@ export default function HomePage() {
         </View>
       </View>
 
-      {/* Section header */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Mis Actividades</Text>
-        <Text style={styles.sectionSubtitle}>
-          {activities.length} {activities.length === 1 ? 'actividad pendiente' : 'actividades pendientes'}
-        </Text>
-      </View>
-
       {/* List */}
       <FlatList
-        data={activities}
+        data={filteredActivities}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={activities.length === 0 ? styles.listEmpty : styles.listContent}
+        contentContainerStyle={filteredActivities.length === 0 ? styles.listEmpty : styles.listContent}
         refreshing={isLoading}
         onRefresh={refetch}
+        ListHeaderComponent={
+          <View>
+            {/* Section header */}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Mis Actividades</Text>
+              <Text style={styles.sectionSubtitle}>
+                {filteredActivities.length} {filteredActivities.length === 1 ? 'actividad pendiente' : 'actividades pendientes'}
+              </Text>
+            </View>
+
+            {/* Filter pills */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 10 }}
+            >
+              {['Todos', 'deber', 'taller', 'prueba', 'reunion'].map(type => {
+                const isAll = type === 'Todos';
+                const isSelected = isAll ? selectedType === null : selectedType === type;
+                const color = isAll ? '#5B5FEF' : typeColors[type as ActivityType];
+                const label = isAll ? 'Todos' : type.charAt(0).toUpperCase() + type.slice(1);
+                return (
+                  <TouchableOpacity
+                    key={type}
+                    onPress={() => setSelectedType(
+                      isAll ? null : (selectedType === type ? null : type as ActivityType)
+                    )}
+                    style={[styles.pillBase, isSelected && { backgroundColor: color, borderWidth: 0 }]}
+                  >
+                    <Text style={[styles.pillText, isSelected && { color: '#fff' }]}>{label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            {/* Search */}
+            <View style={styles.searchContainer}>
+              <Ionicons name="search-outline" size={18} color="#9090B0" style={{ marginRight: 8 }} />
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Buscar por materia..."
+                placeholderTextColor="#9090B0"
+                style={styles.searchInput}
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <Ionicons name="close-circle" size={18} color="#9090B0" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        }
       />
 
       {/* FAB */}
@@ -511,5 +576,37 @@ const styles = StyleSheet.create({
   },
   modalButtonGap: {
     width: 12,
+  },
+  pillBase: {
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderWidth: 1.5,
+    borderColor: '#DDE3FF',
+    borderRadius: 99,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 8,
+  },
+  pillText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4A4A6A',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#DDE3FF',
+    marginHorizontal: 20,
+    marginBottom: 12,
+    paddingHorizontal: 14,
+    height: 48,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: '#1E1E2E',
+    height: '100%',
   },
 });
