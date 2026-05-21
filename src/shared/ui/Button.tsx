@@ -1,4 +1,4 @@
-import { Button as TamaguiButton, Spinner, Text } from 'tamagui';
+import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { theme } from '@/src/core/styles/theme';
 
 interface ButtonProps {
@@ -37,28 +37,36 @@ export default function Button({
   const isDisabled = disabled || isLoading;
 
   return (
-    <TamaguiButton
+    <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      height={52}
-      borderRadius={theme.radius.md}
-      width="100%"
-      backgroundColor={bgMap[variant]}
-      borderWidth={variant === 'ghost' ? 1.5 : 0}
-      borderColor={borderMap[variant]}
-      opacity={isDisabled ? 0.5 : 1}
-      pressStyle={{ opacity: 0.75 }}
-      icon={isLoading ? <Spinner color={textColorMap[variant]} size="small" /> : undefined}
+      activeOpacity={0.75}
+      style={{
+        height: 52,
+        borderRadius: theme.radius.md,
+        width: '100%',
+        backgroundColor: bgMap[variant],
+        borderWidth: variant === 'ghost' ? 1.5 : 0,
+        borderColor: borderMap[variant],
+        opacity: isDisabled ? 0.5 : 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+      }}
     >
-      {!isLoading && (
+      {isLoading ? (
+        <ActivityIndicator color={textColorMap[variant]} size="small" />
+      ) : (
         <Text
-          color={textColorMap[variant]}
-          fontSize={16}
-          fontWeight="700"
+          style={{
+            color: textColorMap[variant],
+            fontSize: 16,
+            fontWeight: '700',
+          }}
         >
           {label}
         </Text>
       )}
-    </TamaguiButton>
+    </TouchableOpacity>
   );
 }

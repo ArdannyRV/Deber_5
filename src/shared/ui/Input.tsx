@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
-import { YStack, XStack, Text, Input as TamaguiInput } from 'tamagui';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/src/core/styles/theme';
 
@@ -35,25 +34,30 @@ export default function Input({
       : theme.colors.border;
 
   return (
-    <YStack gap={6} marginBottom={16}>
-      <Text fontSize={13} fontWeight="600" color={theme.colors.textMid}>
+    <View style={{ gap: 6, marginBottom: 16 }}>
+      <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textMid }}>
         {label}
       </Text>
 
-      <XStack
-        alignItems="center"
-        borderWidth={1.5}
-        borderColor={borderColor}
-        borderRadius={theme.radius.md}
-        backgroundColor={theme.colors.inputBg}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderWidth: 1.5,
+          borderColor: borderColor,
+          borderRadius: theme.radius.md,
+          backgroundColor: theme.colors.inputBg,
+        }}
       >
-        <TamaguiInput
-          flex={1}
-          height={52}
-          paddingHorizontal={16}
-          fontSize={15}
-          color={theme.colors.text}
-          placeholderTextColor={theme.colors.textMuted as any}
+        <TextInput
+          style={{
+            flex: 1,
+            height: 52,
+            paddingHorizontal: 16,
+            fontSize: 15,
+            color: theme.colors.text,
+          }}
+          placeholderTextColor={theme.colors.textMuted}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
@@ -62,9 +66,6 @@ export default function Input({
           autoCapitalize={autoCapitalize}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          borderWidth={0}
-          backgroundColor="transparent"
-          unstyled
         />
         {isPassword && (
           <TouchableOpacity
@@ -78,13 +79,13 @@ export default function Input({
             />
           </TouchableOpacity>
         )}
-      </XStack>
+      </View>
 
       {error ? (
-        <Text fontSize={12} color={theme.colors.danger}>
+        <Text style={{ fontSize: 12, color: theme.colors.danger }}>
           {error}
         </Text>
       ) : null}
-    </YStack>
+    </View>
   );
 }
