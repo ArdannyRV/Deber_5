@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "authesfot",
+    "scheme": "auth",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "jsEngine": "jsc",
@@ -27,7 +27,7 @@
           "autoVerify": true,
           "data": [
             {
-              "scheme": "authesfot",
+              "scheme": "auth",
               "host": "*",
               "pathPrefix": "/"
             }

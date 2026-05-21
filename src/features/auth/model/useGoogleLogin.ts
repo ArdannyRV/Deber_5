@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '@/src/shared/api/supabase';
+import * as Linking from 'expo-linking';
 
 export function useGoogleLogin() {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +12,7 @@ export function useGoogleLogin() {
     setError(null);
 
     try {
-      const redirectTo = `${process.env.EXPO_PUBLIC_WEB_URL}`;
+      const redirectTo = Linking.createURL('/');
 
       const { data, error: oauthErr } = await supabase.auth.signInWithOAuth({
         provider: 'google',
