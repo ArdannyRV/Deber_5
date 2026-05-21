@@ -17,11 +17,11 @@
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
     "@supabase/supabase-js": "^2.106.1",
-    "@tamagui/animations-react-native": "^2.0.0-rc.42",
-    "@tamagui/config": "^2.0.0-rc.42",
-    "@tamagui/core": "^2.0.0-rc.42",
-    "@tamagui/font-inter": "^2.0.0-rc.42",
-    "@tamagui/themes": "^2.0.0-rc.42",
+    "@tamagui/animations-react-native": "^1.121.6",
+    "@tamagui/config": "^1.121.6",
+    "@tamagui/core": "^1.121.6",
+    "@tamagui/font-inter": "^1.121.6",
+    "@tamagui/themes": "^1.121.6",
     "@tanstack/react-query": "^5.100.11",
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
@@ -45,15 +45,18 @@
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.5.1",
-    "tamagui": "^2.0.0-rc.42"
+    "react-native-worklets": "^0.6.0",
+    "tamagui": "^1.121.6"
   },
   "devDependencies": {
-    "@tamagui/babel-plugin": "^2.0.0-rc.42",
+    "@tamagui/babel-plugin": "^1.121.6",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "typescript": "~5.9.2"
+  },
+  "overrides": {
+    "react-native-worklets": "^0.6.0"
   },
   "private": true
 }
