@@ -11,7 +11,7 @@ export function useForgotPassword() {
     setError(null);
     setIsSuccess(false);
 
-    const redirectTo = `${process.env.EXPO_PUBLIC_WEB_URL}/reset-password`;
+    const redirectTo = `${process.env.EXPO_PUBLIC_WEB_URL ?? 'https://auth-ruddy-three.vercel.app'}/reset-password`;
 
     const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo,

@@ -1,9 +1,11 @@
 const { getDefaultConfig } = require('expo/metro-config');
-
 const config = getDefaultConfig(__dirname);
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName.includes('@opentelemetry')) {
+  if (
+    moduleName.includes('@opentelemetry') ||
+    moduleName.includes('OTEL_PKG')
+  ) {
     return { type: 'empty' };
   }
   return context.resolveRequest(context, moduleName, platform);
